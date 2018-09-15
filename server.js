@@ -19,7 +19,10 @@ const db = require("./config/Keys").mongoURI;
 
 mongoose.Promise = global.Promise;
 // Connect to MongoDB
-mongoose.connect(db);
+mongoose.connect(
+  db,
+  { useNewUrlParser: true }
+);
 // Passport middleware
 app.use(passport.initialize());
 
