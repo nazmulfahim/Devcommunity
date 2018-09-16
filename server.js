@@ -6,8 +6,7 @@ const passport = require("passport");
 const users = require("./routes/api/users");
 const posts = require("./routes/api/posts");
 const profile = require("./routes/api/profile");
-const path = require("path");
-
+const passport = require("passport");
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
