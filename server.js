@@ -1,48 +1,49 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const Keys = require("./config/Keys");
-const bodyParser = require("body-parser");
-const passport = require("passport");
-const users = require("./routes/api/users");
-const posts = require("./routes/api/posts");
-const profile = require("./routes/api/profile");
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const passport = require('passport');
+const path = require('path');
+
+const users = require('./routes/api/users');
+const profile = require('./routes/api/profile');
+const posts = require('./routes/api/posts');
+
 const app = express();
 
+// Body parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-//connect to database
-mongoose.Promise = global.Promise;
+
+// DB Config
+const db = require('./config/keys').mongoURI;
+
+// Connect to MongoDB
 mongoose
-  .connect(
-    Keys.mongoURI,
-    { useNewUrlParser: true }
-  )
-  .then(() => console.log("MONGODB DATABASE CONNECTED"))
+  .connect(db)
+  .then(() => console.log('MongoDB Connected'))
   .catch(err => console.log(err));
 
-//passport config
-require("./config/passport")(passport);
-
-//passport middleware
+// Passport middleware
 app.use(passport.initialize());
 
-app.use("/api/users", users);
-app.use("/api/profile", profile);
-app.use("/api/posts", posts);
+// Passport Config
+require('./config/passport')(passport);
 
-if (process.env.NODE_ENV === "production") {
-  //express will serve up the assests
-  app.use(express.static("client/build"));
+// Use Routes
+app.use('/api/users', users);
+app.use('/api/profile', profile);
+app.use('/api/posts', posts);
 
-  //express will serve up the index.html file
-  //if it doesn't recognize the route
-  const path = require("path");
-  app.get("/*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+// Server static assets if in production
+if (process.env.NODE_ENV === 'production') {
+  // Set static folder
+  app.use(express.static('client/build'));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
   });
 }
 
-// server runiing
 const port = process.env.PORT || 5000;
 
-app.listen(port, () => console.log(`server is running on port ${port}`));
+app.listen(port, () => console.log(`Server running on port ${port}`));
