@@ -15,7 +15,10 @@ app.use(bodyParser.json());
 //connect to database
 mongoose.Promise = global.Promise;
 mongoose
-  .connect(Keys.mongoURI)
+  .connect(
+    Keys.mongoURI,
+    { useNewUrlParser: true }
+  )
   .then(() => console.log("MONGODB DATABASE CONNECTED"))
   .catch(err => console.log(err));
 
@@ -36,7 +39,7 @@ if (process.env.NODE_ENV === "production") {
   //express will serve up the index.html file
   //if it doesn't recognize the route
   const path = require("path");
-  app.get("*", (req, res) => {
+  app.get("/*", (req, res) => {
     res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
   });
 }
